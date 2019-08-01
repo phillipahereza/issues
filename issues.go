@@ -25,10 +25,6 @@ type Response struct {
 	Items             [] ResponseItem `json:"items"`
 }
 
-const (
-	LANGUAGE = "go"
-	LABEL    = "good-first-issue"
-)
 
 func getMinDate(days int) string {
 	today := time.Now()
@@ -76,7 +72,7 @@ func main() {
 	var days int
 
 	app := cli.NewApp()
-	app.Name = "issues"
+	app.Name = "Issue Finder"
 	app.Usage = "Need to contribute to OpenSource? Find fresh issues"
 
 	app.Flags = []cli.Flag {
