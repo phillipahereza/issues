@@ -60,7 +60,7 @@ func FetchIssues(language, label string, days int) (Response, error){
 }
 
 func PrintResponse(writer io.Writer, responseObject Response) {
-	for i := 0; i < responseObject.TotalCount; i++  {
+	for i := 0; i < len(responseObject.Items); i++  {
 		item := responseObject.Items[i]
 		fmt.Fprintf(writer, "%s\n", item.URL)
 	}
@@ -103,7 +103,7 @@ func main() {
 			_ = cli.ShowAppHelp(c)
 			os.Exit(0)
 		}
-		labels := []string{"good-first-issue", "help-wanted", "first-timers-only"}
+		labels := []string{"good-first-issue", "help-wanted", "bug"}
 
 		for _, lbl := range labels {
 			go func(language *string, lb string, days *int) {
@@ -118,9 +118,6 @@ func main() {
 			}(&language, lbl, &days)
 
 		}
-
-
-
 
 		return nil
 	}
