@@ -115,7 +115,6 @@ func main() {
 					fmt.Println(err.Error())
 					os.Exit(1)
 				}
-				fmt.Println(lb)
 				PrintResponse(os.Stdout, responseObject)
 
 			}(&language, lbl, &days, wg)

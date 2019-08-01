@@ -12,7 +12,7 @@ go get github.com/phillipahereza/issue_finder
 
 #### Usage
 
-[![asciicast](https://asciinema.org/a/HwURcOP2S6G0g8QKcxl7XZD9n.svg)](https://asciinema.org/a/HwURcOP2S6G0g8QKcxl7XZD9n)
+![asciicast](screenshots/demo.gif)
 
 ```
 $ issues help
