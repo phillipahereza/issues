@@ -103,14 +103,24 @@ func main() {
 			_ = cli.ShowAppHelp(c)
 			os.Exit(0)
 		}
+		labels := []string{"good-first-issue", "help-wanted", "first-timers-only"}
 
-		responseObject, err := FetchIssues(language, label, days)
-		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(1)
+		for _, lbl := range labels {
+			go func(language *string, lb string, days *int) {
+				responseObject, err := FetchIssues(*language, lb, *days)
+				if err != nil {
+					fmt.Println(err.Error())
+					os.Exit(1)
+				}
+				fmt.Println(lb)
+				PrintResponse(os.Stdout, responseObject)
+
+			}(&language, lbl, &days)
+
 		}
 
-		PrintResponse(os.Stdout, responseObject)
+
+
 
 		return nil
 	}
@@ -119,4 +129,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	_, _ = fmt.Scanln()
 }
