@@ -5,7 +5,7 @@ Use this tool to search github for issues with specific labels in a specific lan
 
 #### Installation
 ```bash
-go get github.com/phillipahereza/issue_finder
+go get github.com/phillipahereza/issues
 ```
 
 
