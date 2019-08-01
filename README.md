@@ -36,7 +36,7 @@ GLOBAL OPTIONS:
    --help, -h                  show help
    --version, -v               print the version
    
-$ issues -l go -b python -d 10
+$ issues -l go -b help-wanted -d 10
 
 ```
 
