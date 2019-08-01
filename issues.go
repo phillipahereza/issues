@@ -73,6 +73,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "issues"
+	app.Version = "0.0.1"
 	app.Usage = "Need to contribute to OpenSource? Find fresh issues"
 
 	app.Flags = []cli.Flag {
