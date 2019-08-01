@@ -72,7 +72,7 @@ func main() {
 	var days int
 
 	app := cli.NewApp()
-	app.Name = "Issue Finder"
+	app.Name = "issues"
 	app.Usage = "Need to contribute to OpenSource? Find fresh issues"
 
 	app.Flags = []cli.Flag {
