@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -25,14 +26,14 @@ type Response struct {
 	Items             [] ResponseItem `json:"items"`
 }
 
-
 func getMinDate(days int) string {
 	today := time.Now()
-	minDate := today.AddDate(0, 0, -1 * days)
+	minDate := today.AddDate(0, 0, -1*days)
 	return fmt.Sprintf(minDate.Format("2006-01-02"))
 }
 
-func FetchIssues(language, label string, days int) (Response, error){
+func FetchIssues(language, label string, days int, wg *sync.WaitGroup) (Response, error) {
+	defer wg.Done()
 	minDate := getMinDate(days)
 	url := fmt.Sprintf("https://api.github.com/search/issues?q=label:%s+language:%s+state:open+comments:<2+created:>%s&sort=created&order=desc", label, language, minDate)
 
@@ -60,7 +61,7 @@ func FetchIssues(language, label string, days int) (Response, error){
 }
 
 func PrintResponse(writer io.Writer, responseObject Response) {
-	for i := 0; i < len(responseObject.Items); i++  {
+	for i := 0; i < len(responseObject.Items); i++ {
 		item := responseObject.Items[i]
 		fmt.Fprintf(writer, "%s\n", item.URL)
 	}
@@ -71,12 +72,14 @@ func main() {
 	var label string
 	var days int
 
+	wg := &sync.WaitGroup{}
+
 	app := cli.NewApp()
 	app.Name = "issues"
 	app.Version = "0.0.1"
 	app.Usage = "Need to contribute to OpenSource? Find fresh issues"
 
-	app.Flags = []cli.Flag {
+	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "language, l",
 			Value:       "",
@@ -95,7 +98,6 @@ func main() {
 			Usage:       "Search for issues created within the last n days",
 			Destination: &days,
 		},
-
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -106,8 +108,9 @@ func main() {
 		labels := []string{"good-first-issue", "help-wanted", "bug"}
 
 		for _, lbl := range labels {
-			go func(language *string, lb string, days *int) {
-				responseObject, err := FetchIssues(*language, lb, *days)
+			wg.Add(1)
+			go func(language *string, lb string, days *int, wg *sync.WaitGroup) {
+				responseObject, err := FetchIssues(*language, lb, *days, wg)
 				if err != nil {
 					fmt.Println(err.Error())
 					os.Exit(1)
@@ -115,9 +118,11 @@ func main() {
 				fmt.Println(lb)
 				PrintResponse(os.Stdout, responseObject)
 
-			}(&language, lbl, &days)
+			}(&language, lbl, &days, wg)
 
 		}
+
+		wg.Wait()
 
 		return nil
 	}
@@ -127,5 +132,4 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, _ = fmt.Scanln()
 }
